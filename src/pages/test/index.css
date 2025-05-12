@@ -11,7 +11,7 @@
     display: none !important;
   }
   .ant-anchor::after {
-    content: " " !important;
+    content: ' ' !important;
     position: absolute !important;
     top: 0 !important;
     right: 1 !important;
