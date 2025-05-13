@@ -1,6 +1,5 @@
 import React from 'react';
 import { Anchor, Col, Row } from 'antd';
-import './index.css';
 
 const App: React.FC = () => (
   <Row>
