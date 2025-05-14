@@ -1,17 +1,17 @@
-import { makeAutoObservable } from 'mobx';
-import { observer } from 'mobx-react-lite';
+import { observer, useLocalStore } from 'mobx-react-lite';
+import { createContext, useContext } from 'react';
 
-const store = makeAutoObservable({
-  count: 0,
-  increment() {
-    this.count += 1;
-  },
-  decrement() {
-    this.count -= 1;
-  },
-});
+interface Store {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+}
+
+const MyContext = createContext<Store | null>(null);
 
 const Count = observer(() => {
+  const store = useContext(MyContext)!;
+
   return (
     <div>
       <p>Count: {store.count}</p>
@@ -20,11 +20,24 @@ const Count = observer(() => {
     </div>
   );
 });
+
 export default function App() {
+  const store = useLocalStore(() => ({
+    count: 0,
+    increment() {
+      this.count += 1;
+    },
+    decrement() {
+      this.count -= 1;
+    },
+  }));
+
   return (
     <div>
       <h1>Hello, mobx!</h1>
-      <Count />
+      <MyContext.Provider value={store}>
+        <Count />
+      </MyContext.Provider>
     </div>
   );
 }
