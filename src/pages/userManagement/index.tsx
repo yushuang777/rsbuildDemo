@@ -1,7 +1,7 @@
 import { Table, Button, Modal, Form, Input, Popconfirm } from 'antd';
 import { useHooks } from './hooks';
-import { tableDataInterface } from './common/typeInterface/userManagementInterface';
-import { EMAIL_REGEX, PHONE_REGEX } from './common/regux';
+import { tableDataInterface } from '../common/typeInterface/userManagementInterface';
+import { EMAIL_REGEX, PHONE_REGEX } from '../common/regux';
 
 function index() {
   const { state, form, showModal, handleCancel, handleOk, handleDelete } =

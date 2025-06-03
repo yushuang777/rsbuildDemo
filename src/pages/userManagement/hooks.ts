@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 import { actions, initialState, reducer } from './reducer';
 import { Form } from 'antd';
-import { tableDataInterface } from './common/typeInterface/userManagementInterface';
+import { tableDataInterface } from '../common/typeInterface/userManagementInterface';
 
 export function useHooks() {
   const [state, dispatch] = useReducer(reducer, initialState);

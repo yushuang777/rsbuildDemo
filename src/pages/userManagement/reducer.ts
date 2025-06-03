@@ -1,4 +1,4 @@
-import { tableDataInterface } from './common/typeInterface/userManagementInterface';
+import { tableDataInterface } from '../common/typeInterface/userManagementInterface';
 
 interface State {
   tableData: tableDataInterface[];
