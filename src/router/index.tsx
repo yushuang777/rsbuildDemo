@@ -1,6 +1,5 @@
 import { createBrowserRouter, NonIndexRouteObject } from 'react-router';
-import Test from '../pages/test';
-import ReduxTest from '../pages/reduxTest';
+import UserManagement from '../pages/userManagement';
 export interface CustomRouteObject extends NonIndexRouteObject {
   path: string;
   title?: string;
@@ -9,11 +8,7 @@ export interface CustomRouteObject extends NonIndexRouteObject {
 export const routeList: CustomRouteObject[] = [
   {
     path: '/',
-    element: <Test />,
-  },
-  {
-    path: '/reduxTest',
-    element: <ReduxTest />,
+    element: <UserManagement />,
   },
 ];
 
