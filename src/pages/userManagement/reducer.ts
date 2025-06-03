@@ -3,26 +3,13 @@ import { tableDataInterface } from '../common/typeInterface/userManagementInterf
 interface State {
   tableData: tableDataInterface[];
   currentUser: tableDataInterface;
-  isModalVisible: boolean;
+  isEditModalVisible: boolean;
+  selectedKeys: React.Key[];
+  isAddModalVisible: boolean;
 }
 type Action = CustomActions<State>;
 export const initialState: State = {
-  tableData: [
-    {
-      id: '1',
-      name: '张三',
-      age: '12',
-      email: '123@example.com',
-      phone: '123456789',
-    },
-    {
-      id: '2',
-      name: '李四',
-      age: '12',
-      email: '121233@example.com',
-      phone: '987654321',
-    },
-  ],
+  tableData: [],
   currentUser: {
     id: '',
     name: '',
@@ -30,7 +17,9 @@ export const initialState: State = {
     age: '',
     phone: '',
   },
-  isModalVisible: false,
+  isEditModalVisible: false,
+  selectedKeys: [],
+  isAddModalVisible: false,
 };
 
 export function reducer(state: State = initialState, action: Action): State {
@@ -42,10 +31,15 @@ export function reducer(state: State = initialState, action: Action): State {
     case 'setCurrentUserAction':
       newstate.currentUser = action.payload;
       return newstate;
-    case 'setIsModalVisibleAction':
-      newstate.isModalVisible = action.payload;
+    case 'setIsEditModalVisibleAction':
+      newstate.isEditModalVisible = action.payload;
       return newstate;
-
+    case 'setSelectedKeysAction':
+      newstate.selectedKeys = action.payload;
+      return newstate;
+    case 'setIsAddModalVisibleAction':
+      newstate.isAddModalVisible = action.payload;
+      return newstate;
     case 'resetStateAction':
       return initialState;
     default:
@@ -70,11 +64,29 @@ export const actions: ActionFunctions<State> = {
       payload: val,
     };
   },
-  setIsModalVisibleAction: function (
+  setIsEditModalVisibleAction: function (
     val: boolean
-  ): CustomActionFromKeyState<'setIsModalVisibleAction', State> {
+  ): CustomActionFromKeyState<'setIsEditModalVisibleAction', State> {
     return {
-      type: 'setIsModalVisibleAction',
+      type: 'setIsEditModalVisibleAction',
+      payload: val,
+    };
+  },
+
+  setSelectedKeysAction: function (
+    val: React.Key[]
+  ): CustomActionFromKeyState<'setSelectedKeysAction', State> {
+    return {
+      type: 'setSelectedKeysAction',
+      payload: val,
+    };
+  },
+
+  setIsAddModalVisibleAction: function (
+    val: boolean
+  ): CustomActionFromKeyState<'setIsAddModalVisibleAction', State> {
+    return {
+      type: 'setIsAddModalVisibleAction',
       payload: val,
     };
   },

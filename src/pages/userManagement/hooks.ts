@@ -1,46 +1,102 @@
 import { useReducer } from 'react';
 import { actions, initialState, reducer } from './reducer';
-import { Form } from 'antd';
+import { Form, message } from 'antd';
 import { tableDataInterface } from '../common/typeInterface/userManagementInterface';
-
+import useManagementStore from '../store/managementStore';
 export function useHooks() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [form] = Form.useForm();
-  const { tableData, currentUser } = state;
+  const [addform] = Form.useForm();
+  const [editform] = Form.useForm();
+  const { tableData, currentUser, selectedKeys } = state;
+  const { updateTableData, tableDataStore } = useManagementStore();
 
-  const showModal = (user?: tableDataInterface) => {
-    if (user) {
-      dispatch(actions.setCurrentUserAction(user));
-      form.setFieldsValue(user);
-    }
-    dispatch(actions.setIsModalVisibleAction(true));
+  const showEditModal = (user: tableDataInterface) => {
+    dispatch(actions.setCurrentUserAction(user));
+    editform.setFieldsValue(user);
+    dispatch(actions.setIsEditModalVisibleAction(true));
   };
 
-  const handleCancel = () => {
-    form.resetFields();
-    dispatch(actions.setIsModalVisibleAction(false));
+  const handleEditCancel = () => {
+    editform.resetFields();
+    dispatch(actions.setIsEditModalVisibleAction(false));
     dispatch(actions.setCurrentUserAction({} as tableDataInterface));
   };
 
-  const handleOk = async () => {
-    const formValues = await form.validateFields();
-    if (currentUser.id) {
-      // 编辑用户
-      const updateTableData = tableData.map((item) =>
-        item.id === currentUser.id ? { ...item, ...formValues } : item
-      );
-      dispatch(actions.setTableDataAction(updateTableData));
-    } else {
-      // 添加用户
-      const newUser = { id: tableData?.length + 1, ...formValues };
-      dispatch(actions.setTableDataAction([...tableData, newUser]));
-    }
-    handleCancel();
+  const handleEditOk = async () => {
+    const formValues = await editform.validateFields();
+    const updateTable = tableData.map((item) =>
+      item.id === currentUser.id ? { ...item, ...formValues } : item
+    );
+    dispatch(actions.setTableDataAction(updateTable));
+    updateTableData(updateTable);
+    handleEditCancel();
   };
 
-  const handleDelete = (id: string) => {
-    const updateTableData = tableData.filter((item) => item.id !== id);
-    dispatch(actions.setTableDataAction(updateTableData));
+  const handleDelete = () => {
+    if (selectedKeys.length === 0) {
+      message.warning('请先勾选要删除的信息');
+      return;
+    }
+    const updateTable = tableData.filter(
+      (item) => !selectedKeys.includes(item.id)
+    );
+    dispatch(actions.setTableDataAction(updateTable));
+    updateTableData(updateTable);
   };
-  return { state, form, showModal, handleCancel, handleOk, handleDelete };
+
+  const handleSearch = (value: string) => {
+    const filtered = tableDataStore.filter(
+      (item: tableDataInterface) =>
+        item.name.includes(value) ||
+        item.email.includes(value) ||
+        item.phone.includes(value)
+    );
+    dispatch(actions.setTableDataAction(filtered));
+  };
+
+  const handleReset = () => {
+    dispatch(actions.setTableDataAction(tableDataStore));
+  };
+
+  const handleTableChange = (selectedKeys: React.Key[]) => {
+    dispatch(actions.setSelectedKeysAction(selectedKeys));
+  };
+
+  const showAddModal = () => {
+    dispatch(actions.setIsAddModalVisibleAction(true));
+  };
+
+  const handleAddCancel = () => {
+    addform.resetFields();
+    dispatch(actions.setIsAddModalVisibleAction(false));
+  };
+
+  const handleAddOk = async () => {
+    const formValues = await addform.validateFields();
+    const addIdtableData = formValues?.addList?.map((item: any) => ({
+      ...item,
+      id: Math.random().toString(36).substring(2, 9),
+    }));
+    console.log(addIdtableData);
+    const updatedTableData = [...tableData, ...addIdtableData];
+    dispatch(actions.setTableDataAction(updatedTableData));
+    updateTableData(updatedTableData);
+    handleAddCancel();
+  };
+
+  return {
+    state,
+    addform,
+    editform,
+    showAddModal,
+    showEditModal,
+    handleEditCancel,
+    handleEditOk,
+    handleDelete,
+    handleSearch,
+    handleReset,
+    handleTableChange,
+    handleAddCancel,
+    handleAddOk,
+  };
 }
